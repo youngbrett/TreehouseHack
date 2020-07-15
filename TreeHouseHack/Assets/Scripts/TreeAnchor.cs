@@ -14,19 +14,15 @@ public class TreeAnchor : MonoBehaviour
 
     private void Start()
     {
-        if (Anchor != null)
-        {
-            elevation = Anchor.transform.position.y;
-        }
+        if (Anchor != null) { elevation = Anchor.transform.position.y; }            //  Set the Tree Anchor position to that of the tree.  Kinda trick.  Or not.
 
-        testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);              //  DEBUGGING.  Used to show the Connection Point.
         testSphere.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
     }
 
-    void Update()
+    void LateUpdate()
     {
-        CP = Anchor.transform.position + Anchor.transform.forward * CPTreeOffset;
-        testSphere.transform.position = CP;
+        CP = Anchor.transform.position + Anchor.transform.forward * CPTreeOffset;           //  On every frame, locate the Connection Point so it's in front of the Tree Anchor.  
+        testSphere.transform.position = CP;                                                 //  DEBUGGING.  Get rid of later.
     }
-
 }

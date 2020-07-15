@@ -7,7 +7,4 @@ using System;
 public class Tree : MonoBehaviour
 {
     public float Diameter = 0.0254f;
-
-
-
 }

@@ -10,12 +10,5 @@ namespace TreeHouseHack {
     {
         public int offset;
         public int length;
-
-        public void Draw (int offset, int length)
-        {
-            
-
-
-        }
     }
 }
