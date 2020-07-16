@@ -13,12 +13,11 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     string path = "";
     string folderName = "xyz";
     string locations = "";
-    int count = 0;
     int numPoints = 0;
     string readStr = "";
     List<Vector3> mPoints = new List<Vector3>(); // empty now
     static List<Vector3> newPoints = new List<Vector3>(); // empty now
-    public GameObject go;
+    public GameObject go, go2;
 
 
     [SerializeField]
@@ -79,15 +78,26 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
 
     void ReadFile()
     {
-        string path = "Assets/StreamingAssets/dots.txt";
 
-        //Read the text from directly from the test.txt file
-        StreamReader reader = new StreamReader(path);
-        readStr = reader.ReadToEnd();
-        reader.Close();
-        newPoints = DeserializeVector3Array(readStr);
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            newPoints = mPoints;
+        }
+        else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
+        {
+            string path = "Assets/StreamingAssets/dots.txt";
+
+            //Read the text from directly from the test.txt file
+            StreamReader reader = new StreamReader(path);
+            readStr = reader.ReadToEnd();
+            reader.Close();
+            newPoints = DeserializeVector3Array(readStr);
+        }
+        
+
+        
         for (int i = 0; i < newPoints.Count; i++) {
-            if (newPoints[i].y > -1 && newPoints[i].y < 1.3 && Mathf.Abs(newPoints[i].z) < 12 && Mathf.Abs(newPoints[i].x) < 12)
+            if (i%10 == 0 && newPoints[i].y > -1 && newPoints[i].y < 1.3 && Mathf.Abs(newPoints[i].z) < 12 && Mathf.Abs(newPoints[i].x) < 12)
             {
                 GameObject.Instantiate(go, newPoints[i],Quaternion.identity);
         }
@@ -123,17 +133,40 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
         return result;
     }
 
-    private void Update()
+    private RaycastHit hit;
+
+    void Update()
     {
         
-        if (count == 5000 )
+        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            //SaveFile();
+            if (Input.touchCount > 0 && Input.touchCount < 2)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+                if (Physics.Raycast(ray, out hit) && Input.GetMouseButtonDown(0))
+                {
+                    Debug.Log("I actually hit something");
+                    Debug.Log(hit.point);
+                    GameObject.Instantiate(go2, hit.point, Quaternion.identity);
+
+                }
+            }
         }
-        else if(count < 5000){
-            count++;
+        else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit) && Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("I actually hit something");
+                Debug.Log(hit.point);
+                GameObject.Instantiate(go2, hit.point, Quaternion.identity);
+            }
         }
     }
+
+
+
+
 
     public void SwitchVisualizationMode()
     {
