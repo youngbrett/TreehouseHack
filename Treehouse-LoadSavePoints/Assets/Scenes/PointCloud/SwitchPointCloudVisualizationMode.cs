@@ -16,8 +16,21 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     int numPoints = 0;
     string readStr = "";
     List<Vector3> mPoints = new List<Vector3>(); // empty now
-    static List<Vector3> newPoints = new List<Vector3>(); // empty now
+    public static List<Vector3> newPoints = new List<Vector3>(); // empty now
     public GameObject go, go2;
+    List<Vector3> result = new List<Vector3>();
+    float minDist = 0.4f;
+
+    float Mx_c = 0f; //Circle's center coordinate (X Axis).
+    float My_c = 0f; //Circle's center coordinate (Y Axis).
+    float Mr = 0f; //Circle's radius.
+
+    public GameObject center;
+    public static Transform[] treeTransform1;
+
+    List<Vector3> tree1Rad = new List<Vector3>();
+    Vector3[] tree1RadArray;
+    
 
 
     [SerializeField]
@@ -94,15 +107,13 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
             newPoints = DeserializeVector3Array(readStr);
         }
         
-
-        
         for (int i = 0; i < newPoints.Count; i++) {
-            if (i%10 == 0 && newPoints[i].y > -1 && newPoints[i].y < 1.3 && Mathf.Abs(newPoints[i].z) < 12 && Mathf.Abs(newPoints[i].x) < 12)
+            if (i%20 == 0)
             {
                 GameObject.Instantiate(go, newPoints[i],Quaternion.identity);
-        }
+            }
 
-    }
+        }
         
     }
     
@@ -122,7 +133,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     public List<Vector3> DeserializeVector3Array(string aData)
     {
         string[] vectors = aData.Split('|');
-        List<Vector3> result = new List<Vector3>();
+        //List<Vector3> result = new List<Vector3>();
         for (int i = 0; i < vectors.Length; i++)
         {
             string[] values = vectors[i].Split(',');
@@ -143,11 +154,51 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
             if (Input.touchCount > 0 && Input.touchCount < 2)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+                Touch touch = Input.GetTouch(0);
                 if (Physics.Raycast(ray, out hit) && Input.GetMouseButtonDown(0))
                 {
-                    Debug.Log("I actually hit something");
-                    Debug.Log(hit.point);
-                    GameObject.Instantiate(go2, hit.point, Quaternion.identity);
+                    //Debug.Log("I actually hit something");
+                    //Debug.Log(hit.point);
+                    //Debug.Log(newPoints.Count);
+
+                    tree1RadArray = new Vector3[newPoints.Count];
+                    int stupidCounter = 0;
+
+                    for (int i = 0; i < newPoints.Count; i++)
+                    {
+                        if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.1f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
+                        {
+                            stupidCounter++;
+                        }
+
+                    }
+                    treeTransform1 = new Transform[stupidCounter];
+                    stupidCounter = 0;
+
+                    for (int i = 0; i < newPoints.Count; i++)
+                    {
+                        if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.1f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
+                        {
+
+                            //Debug.Log("go Added");
+                            tree1Rad.Add(new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z));
+                            tree1RadArray[i] = new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z);
+                            GameObject mNewGO = GameObject.Instantiate(go2, new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z), Quaternion.identity);
+                            treeTransform1[stupidCounter] = (mNewGO.transform);
+                            stupidCounter++;
+
+                        }
+
+                    }
+                    //Debug.Log(treeTransform1[4].position.x.ToString());
+                    FitCircle.FitCircleToCoordinates(ref Mx_c, ref My_c, ref Mr, treeTransform1);
+                    if (center)
+                    {
+                        center.transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
+                        center.transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
+                    }
+
+                    //GameObject.Instantiate(go2, hit.point, Quaternion.identity);
 
                 }
             }
@@ -157,9 +208,47 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit) && Input.GetMouseButtonDown(0))
             {
-                Debug.Log("I actually hit something");
-                Debug.Log(hit.point);
-                GameObject.Instantiate(go2, hit.point, Quaternion.identity);
+                //Debug.Log("I actually hit something");
+                //Debug.Log(hit.point);
+
+                //Debug.Log(newPoints.Count);
+                tree1RadArray = new Vector3[newPoints.Count];
+                int stupidCounter = 0;
+
+                for (int i = 0; i < newPoints.Count; i++)
+                {
+                    if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.1f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
+                    {
+                        stupidCounter++;
+                    }
+
+                }
+                treeTransform1 = new Transform[stupidCounter];
+                stupidCounter = 0;
+
+                for (int i = 0; i < newPoints.Count; i++)
+                {
+                    if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.1f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
+                    {
+                        
+                        //Debug.Log("go Added");
+                        tree1Rad.Add(new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z));
+                        tree1RadArray[i] = new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z);
+                        GameObject mNewGO = GameObject.Instantiate(go2, new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z), Quaternion.identity);
+                        treeTransform1[stupidCounter] = (mNewGO.transform);
+                        stupidCounter++;
+
+                    }
+
+                }
+                //Debug.Log(treeTransform1[4].position.x.ToString());
+                FitCircle.FitCircleToCoordinates(ref Mx_c, ref My_c, ref Mr, treeTransform1);
+                if (center)
+                {
+                    center.transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
+                    center.transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
+                }
+                //GameObject.Instantiate(go2, hit.point, Quaternion.identity);
             }
         }
     }
