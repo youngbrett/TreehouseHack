@@ -58,11 +58,6 @@ public class Treehouse : MonoBehaviour
         GameObject t2 = Trees[2];
         GameObject tt;
 
-        /*
-        b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP);
-        b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
-        b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP);
-        */
         b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
         b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP); 
         b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP); 

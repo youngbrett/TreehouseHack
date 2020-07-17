@@ -29,11 +29,7 @@ namespace TreeHouseHack
 
         public void ManagePickets()
         {
-            //RailBounds = this.gameObject.GetComponent<Renderer>().bounds;
-
-            //ActivePickets = Mathf.CeilToInt(RailBounds.size.z / Spacing) + 1;
             ActivePickets = Mathf.CeilToInt(RailLength / Spacing) + 1;
-
             int delta = ActivePickets - Pickets.Count;
 
             if (this.Pickets.Count == 0)
@@ -57,12 +53,9 @@ namespace TreeHouseHack
                     for (int j = 0; j < delta; j++)           //  Add Plates.
                     {
                         AddPicket();
-                        Debug.Log("Picket Added");
                     }
                 }
-
             }
-
             UpdateOrientation();
 
             void AddPicket()
@@ -75,7 +68,6 @@ namespace TreeHouseHack
         void LateUpdate()
         {
             if (this.transform.hasChanged) {
-                //RailBounds = this.gameObject.GetComponent<Renderer>().bounds;
                 ManagePickets();
             }
         }
@@ -84,15 +76,14 @@ namespace TreeHouseHack
         {
             for (int i = 0; i < ActivePickets; i++)
             {
-                //float space = RailBounds.size.z / (ActivePickets - 1);
-                float space = RailLength / (ActivePickets - 1);
+            float space = RailLength / (ActivePickets - 1);
 
-                Pickets[i].transform.rotation = this.transform.rotation * Quaternion.Euler(-Vector3.left * 90 + Vector3.forward * 90);
+            Pickets[i].transform.rotation = this.transform.rotation * Quaternion.Euler(-Vector3.left * 90 + Vector3.forward * 90);
 
-                if (i == 0) { Pickets[i].transform.position = this.transform.position; }
-                else { Pickets[i].transform.position = this.transform.position + i * space * this.transform.forward; }
+            if (i == 0) { Pickets[i].transform.position = this.transform.position; }
+            else { Pickets[i].transform.position = this.transform.position + i * space * this.transform.forward; }
 
-               Pickets[i].transform.localScale = new Vector3(1, 1, this.transform.GetComponentInParent<Treehouse>().RailElevation * 1.1f / 2.4384f);
+            Pickets[i].transform.localScale = new Vector3(1, 1, this.transform.GetComponentInParent<Treehouse>().RailElevation * 1.1f / 2.4384f);
             }
         }
     }

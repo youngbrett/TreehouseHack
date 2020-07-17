@@ -119,9 +119,7 @@ namespace TreeHouseHack
         {
             rail.transform.position = start + new Vector3(0, th.RailElevation, 0);
             rail.transform.rotation = Quaternion.LookRotation(end - start, Vector3.up);
-            //rail.transform.localScale = new Vector3(1, 1, Vector3.Distance(end, start) / rail.gameObject.GetComponent<MeshRenderer>().bounds.size.z);
             rail.transform.localScale = new Vector3(1, 1, Vector3.Distance(end, start) / 2.4384f);
-
             rail.RailLength = Vector3.Distance(end, start);
             }
 
@@ -170,18 +168,12 @@ namespace TreeHouseHack
 
         private void UpdateOrientation()
         {
-
             UpdateDatums();
 
             List<GameObject> OT = new List<GameObject>();
             OT = transform.GetComponent<Treehouse>().OrderedTrees;
-
-            th = gameObject.GetComponent<Treehouse>();          //  Doing this to verify I don't have a weird ref problem.
-
             if (DatumDistance != 0) ProjectionPoint = GetAlttitudePoint();
             int peak = Mathf.FloorToInt(Vector3.Distance(ProjectionPoint, OT[0].GetComponent<TreeAnchor>().CP) / PlateWidth);
-
-
 
             for (int i = 0; i < Plates.Count; i++)
             {
