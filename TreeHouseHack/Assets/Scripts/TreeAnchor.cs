@@ -1,15 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TreeHouseHack;
+﻿using UnityEngine;
 
 public class TreeAnchor : MonoBehaviour
 {
     public float CPTreeOffset = 0;
+    public float PlateOffset;
+    public float elevation;
+    public float diameter;
+
     public Vector3 CP;  // Update when the tree moves.
     public GameObject Anchor;
-    public float elevation;
-    public float PlateOffset;
     public GameObject testSphere;
 
     private void Start()

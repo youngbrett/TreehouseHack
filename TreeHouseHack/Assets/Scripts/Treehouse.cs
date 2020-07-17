@@ -9,11 +9,29 @@ public class Treehouse : MonoBehaviour
     public List<GameObject> Trees = new List<GameObject>(3);
     public List<GameObject> OrderedTrees = new List<GameObject>(3);
     public bool NeedRefresh = false;
-    //public GameObject testSphere;
+    public float Elevation = 2f;
+    public float RailElevation = 1f;
+
+    public GameObject testSphere;
 
     private void Start()
     {
-        //testSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        foreach (var t in Trees)
+        {
+            TreeAnchor ta = t.gameObject.AddComponent<TreeAnchor>();
+            GameObject anchor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            ta.Anchor = anchor;
+            anchor.transform.position = t.transform.position + new Vector3(0f, Elevation, 0f);
+
+            ta.CPTreeOffset = 0.5f;
+            ta.elevation = Elevation;
+            ta.PlateOffset  = 0f;
+            ta.diameter = 0.5f;
+            anchor.transform.localScale = new Vector3(ta.diameter, ta.diameter, ta.diameter);
+            ta.Anchor.layer = 8;
+
+        }
+        UpdateAnchors();
     }
 
     void Update()   {
@@ -29,7 +47,6 @@ public class Treehouse : MonoBehaviour
 
     public void OrderTrees()            // This method orders the trees so we know triangle vertices.
     {
-        //OrderedTrees = new List<GameObject>(3);
         OrderedTrees.Clear();
 
         float b1 = 0;
@@ -40,29 +57,34 @@ public class Treehouse : MonoBehaviour
         GameObject t1 = Trees[1];
         GameObject t2 = Trees[2];
         GameObject tt;
-        
+
+        /*
         b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP);
         b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
         b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP);
+        */
+        b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
+        b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP); 
+        b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP); 
 
-        //  b1 is longest.  b2 is shortest.
+        //  b1 is longest.  b3 is shortest.
         if (b1 < b2)  //  b1 is the longest.
         {
             tt = t0; t0 = t1; t1 = tt;
         }
 
-        b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP);
-        b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
-        b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP);
+        b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
+        b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP);
+        b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP);
 
         if (b1 < b3)
         {
             tt = t0; t0 = t2; t2 = tt;
         }
 
-        b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP);
-        b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
-        b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP);
+        b1 = Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t0.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP);
+        b2 = Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t2.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t1.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP);
+        b3 = Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t0.GetComponent<TreeAnchor>().CP) + Vector3.Distance(t2.GetComponent<TreeAnchor>().CP, t1.GetComponent<TreeAnchor>().CP);
 
         if (b2 < b3)
         {
@@ -106,6 +128,6 @@ public class Treehouse : MonoBehaviour
                 t.GetComponent<TreeAnchor>().CP = anchor.transform.position + anchor.transform.forward * t.GetComponent<TreeAnchor>().CPTreeOffset;         // Change the Connection Point of the Tree Anchor.
             }
         }
-       gameObject.GetComponent<Deck>().ManagePlates();
+       gameObject.GetComponent<Deck>().DrawDeck();
     }
 }
