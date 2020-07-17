@@ -7,20 +7,21 @@ namespace TreeHouseHack
     public class Rail : MonoBehaviour
     {
         public List<RailPicket> Pickets = new List<RailPicket>();   //  Make private after testing.
-
         public GameObject PicketType;
-        public int ActivePickets = 0;
+        public float Spacing = 0.5f;
+        public float RailLength;
+
+        private int ActivePickets = 0;
         private float PicketWidth;
         private Bounds  PicketBounds;
         private Bounds RailBounds;
-        public float Spacing = 0.5f;
 
         void Start()
         {
             if (PicketType == null) PicketType = Resources.Load("Prefabs/Picket") as GameObject;
-            PicketWidth = PicketType.GetComponent<MeshRenderer>().bounds.size.x;                          //  Set the size, bounds of the Plate.
-            PicketBounds = PicketType.GetComponent<MeshRenderer>().bounds;
-            RailBounds = this.gameObject.GetComponent<MeshRenderer>().bounds;
+            PicketWidth = PicketType.GetComponent<Renderer>().bounds.size.x;                          //  Set the size, bounds of the Plate.
+            PicketBounds = PicketType.GetComponent<Renderer>().bounds;
+            RailBounds = this.gameObject.GetComponent<Renderer>().bounds;
 
             ActivePickets = 0;
             ManagePickets();
@@ -28,9 +29,10 @@ namespace TreeHouseHack
 
         public void ManagePickets()
         {
-            RailBounds = this.gameObject.GetComponent<MeshRenderer>().bounds;
+            //RailBounds = this.gameObject.GetComponent<Renderer>().bounds;
 
-            ActivePickets = Mathf.CeilToInt(RailBounds.size.z / Spacing);
+            //ActivePickets = Mathf.CeilToInt(RailBounds.size.z / Spacing) + 1;
+            ActivePickets = Mathf.CeilToInt(RailLength / Spacing) + 1;
 
             int delta = ActivePickets - Pickets.Count;
 
@@ -55,6 +57,7 @@ namespace TreeHouseHack
                     for (int j = 0; j < delta; j++)           //  Add Plates.
                     {
                         AddPicket();
+                        Debug.Log("Picket Added");
                     }
                 }
 
@@ -72,7 +75,7 @@ namespace TreeHouseHack
         void LateUpdate()
         {
             if (this.transform.hasChanged) {
-                RailBounds = this.gameObject.GetComponent<MeshRenderer>().bounds;
+                //RailBounds = this.gameObject.GetComponent<Renderer>().bounds;
                 ManagePickets();
             }
         }
@@ -81,10 +84,15 @@ namespace TreeHouseHack
         {
             for (int i = 0; i < ActivePickets; i++)
             {
-                float space = RailBounds.size.z / (ActivePickets - 1);
+                //float space = RailBounds.size.z / (ActivePickets - 1);
+                float space = RailLength / (ActivePickets - 1);
+
                 Pickets[i].transform.rotation = this.transform.rotation * Quaternion.Euler(-Vector3.left * 90 + Vector3.forward * 90);
-                Pickets[i].transform.position = this.transform.position + this.transform.forward * space * i;
-                Pickets[i].transform.localScale = new Vector3(1, 1, this.transform.GetComponentInParent<Treehouse>().RailElevation * 1.1f / 2.4384f);
+
+                if (i == 0) { Pickets[i].transform.position = this.transform.position; }
+                else { Pickets[i].transform.position = this.transform.position + i * space * this.transform.forward; }
+
+               Pickets[i].transform.localScale = new Vector3(1, 1, this.transform.GetComponentInParent<Treehouse>().RailElevation * 1.1f / 2.4384f);
             }
         }
     }

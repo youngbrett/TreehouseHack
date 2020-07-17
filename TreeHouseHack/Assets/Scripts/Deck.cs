@@ -8,31 +8,31 @@ namespace TreeHouseHack
     {
         private Treehouse th = new Treehouse();
 
-        public List<Plate> Plates = new List<Plate>();   //  Make private after testing.
-        public List<Beam> Beams = new List<Beam>();   //  Make private after testing.
-        public List<Rail> Rails = new List<Rail>();   //  Make private after testing.
+        private List<Plate> Plates = new List<Plate>();   //  Make private after testing.
+        private List<Beam> Beams = new List<Beam>();   //  Make private after testing.
+        private List<Rail> Rails = new List<Rail>();   //  Make private after testing.
 
         public int BeamPlateOverlap = 0;            // Amount  the deck overlaps beams, typically.
         public GameObject PlateType;                // GameObject of the deck plates.
         public GameObject BeamType;                // GameObject of the deck beams.
         public GameObject RailType;                // GameObject of the deck beams.
 
-        public float PlateWidth = .1f;              // Width of the deck plates.
+        private float PlateWidth = .1f;              // Width of the deck plates.
         private Bounds PlateBounds;                      // This is the extents of the plate.
         private float DatumDistance = 0;            // Longest span.
-        public int ActivePlates = 0;                // Plates currently on the deck.
-        public int ActiveBeams = 0;                // Plates currently on the deck.
-        public int ActiveRails = 0;
+        private int ActivePlates = 0;                // Plates currently on the deck.
+        private int ActiveBeams = 0;                // Plates currently on the deck.
+        private int ActiveRails = 0;
 
-        public Vector3 ProjectionPoint;             // The orthogonal projection point, in world space.
-        public Vector3 test1;                       // DEBUGGING
-        public Vector3 test2;                       // DEBUGGING
-        public Vector3 test3;                       // DEBUGGING
-        public GameObject testsphere;               // DEBUGGING
-        public Vector3 GenerationDirection;         //  Change to private after DEBUG>
-        public Vector3 Orientation;                 //  Change to private after DEBUG>
-        public float PrimaryAngle;
-        public float SecondaryAngle;
+        private Vector3 ProjectionPoint;             // The orthogonal projection point, in world space.
+        private Vector3 test1;                       // DEBUGGING
+        private Vector3 test2;                       // DEBUGGING
+        private Vector3 test3;                       // DEBUGGING
+        private GameObject testsphere;               // DEBUGGING
+        private Vector3 GenerationDirection;         //  Change to private after DEBUG>
+        private Vector3 Orientation;                 //  Change to private after DEBUG>
+        private float PrimaryAngle;
+        private float SecondaryAngle;
 
         private void Awake()
         {
@@ -118,10 +118,12 @@ namespace TreeHouseHack
         void PlaceRail(Rail rail, Vector3 start, Vector3 end)
         {
             rail.transform.position = start + new Vector3(0, th.RailElevation, 0);
-            rail.transform.rotation = Quaternion.LookRotation(end - start);
+            rail.transform.rotation = Quaternion.LookRotation(end - start, Vector3.up);
             //rail.transform.localScale = new Vector3(1, 1, Vector3.Distance(end, start) / rail.gameObject.GetComponent<MeshRenderer>().bounds.size.z);
             rail.transform.localScale = new Vector3(1, 1, Vector3.Distance(end, start) / 2.4384f);
-        }
+
+            rail.RailLength = Vector3.Distance(end, start);
+            }
 
         }
 
