@@ -19,11 +19,18 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     public static List<Vector3> newPoints = new List<Vector3>(); // empty now
     public GameObject go, go2;
     List<Vector3> result = new List<Vector3>();
-    float minDist = 0.4f;
+    float minDist = 0.3f;
+
+    public GameObject TreeHouse;
+    int currentTree = 0;
+
+    public List<GameObject> TreeCyls = new List<GameObject>(3);
 
     float Mx_c = 0f; //Circle's center coordinate (X Axis).
     float My_c = 0f; //Circle's center coordinate (Y Axis).
     float Mr = 0f; //Circle's radius.
+
+    bool runOnce = true;
 
     public GameObject center;
     public static Transform[] treeTransform1;
@@ -64,10 +71,10 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     {
 
         //mPoints.Add(new Vector3(1f, 1f, 1f)); // adding an example Vector3
-        foreach (var point in mPoints)
-        {
-            float myX = point.x;
-        }
+        //foreach (var point in mPoints)
+        //{
+        //    float myX = point.x;
+        //}
 
         btn.onClick.AddListener(SaveFile);
         btn2.onClick.AddListener(ReadFile);
@@ -92,9 +99,15 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     void ReadFile()
     {
 
+        newPoints = new List<Vector3>();
+
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            newPoints = mPoints;
+            
+            foreach (var pt in mPoints) {
+                newPoints.Add(pt);
+            }
+            
         }
         else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.OSXEditor)
         {
@@ -108,7 +121,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
         }
         
         for (int i = 0; i < newPoints.Count; i++) {
-            if (i%20 == 0)
+            if (i%2 == 0)
             {
                 GameObject.Instantiate(go, newPoints[i],Quaternion.identity);
             }
@@ -166,7 +179,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
 
                     for (int i = 0; i < newPoints.Count; i++)
                     {
-                        if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.1f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
+                        if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.05f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
                         {
                             stupidCounter++;
                         }
@@ -177,7 +190,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
 
                     for (int i = 0; i < newPoints.Count; i++)
                     {
-                        if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.1f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
+                        if (Mathf.Abs(newPoints[i].x - hit.point.x) < minDist && Mathf.Abs(newPoints[i].y - hit.point.y) < 0.05f && Mathf.Abs(newPoints[i].z - hit.point.z) < minDist)
                         {
 
                             //Debug.Log("go Added");
@@ -185,6 +198,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                             tree1RadArray[i] = new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z);
                             GameObject mNewGO = GameObject.Instantiate(go2, new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z), Quaternion.identity);
                             treeTransform1[stupidCounter] = (mNewGO.transform);
+                            GameObject.Destroy(mNewGO);
                             stupidCounter++;
 
                         }
@@ -192,11 +206,17 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                     }
                     //Debug.Log(treeTransform1[4].position.x.ToString());
                     FitCircle.FitCircleToCoordinates(ref Mx_c, ref My_c, ref Mr, treeTransform1);
+                    //GameObject myCyl = GameObject.Instantiate(center, new Vector3(Mx_c, treeTransform1[0].position.y, My_c), Quaternion.identity);
                     if (center)
                     {
-                        center.transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
-                        center.transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
+                        TreeCyls[currentTree].transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
+                        if (Mr > 0.2f) {
+                            Mr = 0.2f;
+                        }
+                        TreeCyls[currentTree].transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
                     }
+
+                    currentTree++;
 
                     //GameObject.Instantiate(go2, hit.point, Quaternion.identity);
 
@@ -236,22 +256,37 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                         tree1RadArray[i] = new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z);
                         GameObject mNewGO = GameObject.Instantiate(go2, new Vector3(newPoints[i].x, hit.point.y, newPoints[i].z), Quaternion.identity);
                         treeTransform1[stupidCounter] = (mNewGO.transform);
+                        GameObject.Destroy(mNewGO);
                         stupidCounter++;
-
                     }
-
                 }
                 //Debug.Log(treeTransform1[4].position.x.ToString());
                 FitCircle.FitCircleToCoordinates(ref Mx_c, ref My_c, ref Mr, treeTransform1);
                 if (center)
                 {
-                    center.transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
-                    center.transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
+                    TreeCyls[currentTree].transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
+                    TreeCyls[currentTree].transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
                 }
+
+                currentTree++;
+
+                //TreeCyls.Add(myCyl);
                 //GameObject.Instantiate(go2, hit.point, Quaternion.identity);
             }
         }
+
+
+
+        if (currentTree == 3 && runOnce) {
+            Debug.Log("party time");
+            TreeHouse.GetComponent<Treehouse>().enabled = true;
+            Treehouse.NeedRefresh = true;
+            runOnce = false;
+            gameObject.GetComponent<ARPointCloudManager>().enabled = false;
+        }
     }
+
+    
 
 
 
@@ -280,7 +315,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
             {
                 if (pointCloud.positions.HasValue)
                 {
-                    int maxLen = 1000;
+                    int maxLen = 100;
                     if (pointCloud.positions.Value.Length < maxLen) {
                         maxLen = pointCloud.positions.Value.Length;
                     }
@@ -309,7 +344,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                     m_StringBuilder.Append($"{visualizer.totalPointCount} total points");
                     if (pointCloud.positions.HasValue)
                     {
-                        int maxLen = 1000;
+                        int maxLen = 100;
                         if (pointCloud.positions.Value.Length < maxLen)
                         {
                             maxLen = pointCloud.positions.Value.Length;
@@ -331,7 +366,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
         if (log)
         {
             //log.text = m_StringBuilder.ToString();
-            log.text = numPoints.ToString();
+            log.text = numPoints.ToString() + " | " + currentTree.ToString();
             //log.text = pointCloud.positions.Value
         }
     }
