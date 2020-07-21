@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TreeHouseHack;
 
 namespace TreehouseHack
 {
@@ -68,7 +69,7 @@ namespace TreehouseHack
 
                         GameObject TreeDeck = Instantiate(DeckObject);
                         Treehouse TreehouseComp = TreeDeck.AddComponent<Treehouse>();
-                        TreeDeck.AddComponent<TreehouseHack.Deck>();
+                        TreeDeck.AddComponent<Deck>();
 
                         GameObject newTreeNode1 = Instantiate(DeckNode, P1, rot);
                         GameObject newTreeNode2 = Instantiate(DeckNode, P2, rot);
