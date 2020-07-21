@@ -47,21 +47,48 @@ namespace HabradorDelaunay
 
         }
 
-        internal static double[] AreaFilter(List<Triangle> triangulation, double MinAngle, AreaRange RelativeArea)
+        internal static bool LengthFilter(Triangle tri, uint MaxLength)
+        {
+            // Length of zero means no length filter
+            if (MaxLength == 0)
+            {
+                return true;
+            }
+
+            Vector3 P1 = tri.v1.position;
+            Vector3 P2 = tri.v2.position;
+            Vector3 P3 = tri.v3.position;
+
+            double a = MathFilter.CalculateDistance(P1, P2);
+            double b = MathFilter.CalculateDistance(P2, P3);
+            double c = MathFilter.CalculateDistance(P3, P1);
+
+            if (a > MaxLength || b > MaxLength || c > MaxLength)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        internal static double[] AreaSpan(List<Triangle> triangulation, 
+                                            uint MaxLength, 
+                                            double MinAngle, 
+                                            AreaRange RelativeArea)
         {
             double[] check_range;
 
             List<double> areas = new List<double>();
 
 
-            // Here we get the areas for the triangles that PASS the angle filter
-            // That way, the min area wont be 0.02 for instance
-            // We check those areas against the range later
+            /* Here we get the areas for the triangles that PASS the angle and
+             * length filter. That way, the min area will be a valid triangle.
+             * We check those areas against the range later. */
             foreach (Triangle tri in triangulation)
             {
                 List<double> TriAngles = MathFilter.AngleDegrees(tri);
 
-                if (TriAngles.TrueForAll(angle => angle >= MinAngle))
+                if (LengthFilter(tri, MaxLength) && 
+                    TriAngles.TrueForAll(angle => angle >= MinAngle))
                 {
                     areas.Add(MathFilter.TriangleArea(tri));
                 }
@@ -103,5 +130,6 @@ namespace HabradorDelaunay
 
             return check_range;
         }
+
     }
 }
