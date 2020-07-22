@@ -9,6 +9,6 @@ namespace TreeHouseHack {
     public class Plate : MonoBehaviour
     {
         public int offset;
-        public int length;
+        public float length;
     }
 }
