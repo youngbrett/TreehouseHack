@@ -24,6 +24,8 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
     public GameObject TreeHouse;
     int currentTree = 0;
 
+    bool logShow = false;
+
     public List<GameObject> TreeCyls = new List<GameObject>(3);
 
     float Mx_c = 0f; //Circle's center coordinate (X Axis).
@@ -32,7 +34,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
 
     bool runOnce = true;
 
-    public GameObject center;
+    //public GameObject center;
     public static Transform[] treeTransform1;
 
     List<Vector3> tree1Rad = new List<Vector3>();
@@ -98,7 +100,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
 
     void ReadFile()
     {
-
+        logShow = true;
         newPoints = new List<Vector3>();
 
         if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
@@ -121,7 +123,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
         }
         
         for (int i = 0; i < newPoints.Count; i++) {
-            if (i%2 == 0)
+            if (i%5 == 0)
             {
                 GameObject.Instantiate(go, newPoints[i],Quaternion.identity);
             }
@@ -207,7 +209,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                     //Debug.Log(treeTransform1[4].position.x.ToString());
                     FitCircle.FitCircleToCoordinates(ref Mx_c, ref My_c, ref Mr, treeTransform1);
                     //GameObject myCyl = GameObject.Instantiate(center, new Vector3(Mx_c, treeTransform1[0].position.y, My_c), Quaternion.identity);
-                    if (center)
+                    if (true)
                     {
                         TreeCyls[currentTree].transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
                         if (Mr > 0.2f) {
@@ -262,10 +264,10 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                 }
                 //Debug.Log(treeTransform1[4].position.x.ToString());
                 FitCircle.FitCircleToCoordinates(ref Mx_c, ref My_c, ref Mr, treeTransform1);
-                if (center)
+                if (true)
                 {
                     TreeCyls[currentTree].transform.position = new Vector3(Mx_c, treeTransform1[0].position.y, My_c);
-                    TreeCyls[currentTree].transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
+                    //TreeCyls[currentTree].transform.localScale = new Vector3(Mr * 2, 0.01f, Mr * 2);
                 }
 
                 currentTree++;
@@ -315,7 +317,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
             {
                 if (pointCloud.positions.HasValue)
                 {
-                    int maxLen = 100;
+                    int maxLen = 50;
                     if (pointCloud.positions.Value.Length < maxLen) {
                         maxLen = pointCloud.positions.Value.Length;
                     }
@@ -344,7 +346,7 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                     m_StringBuilder.Append($"{visualizer.totalPointCount} total points");
                     if (pointCloud.positions.HasValue)
                     {
-                        int maxLen = 100;
+                        int maxLen = 50;
                         if (pointCloud.positions.Value.Length < maxLen)
                         {
                             maxLen = pointCloud.positions.Value.Length;
@@ -363,11 +365,14 @@ public class SwitchPointCloudVisualizationMode : MonoBehaviour
                 }
             }
         }
-        if (log)
+        if (logShow == false)
         {
             //log.text = m_StringBuilder.ToString();
-            log.text = numPoints.ToString() + " | " + currentTree.ToString();
+            log.text = "points scanned " + numPoints.ToString();
             //log.text = pointCloud.positions.Value
+        }
+        else {
+            log.text = "trees selected " + currentTree.ToString();
         }
     }
 
