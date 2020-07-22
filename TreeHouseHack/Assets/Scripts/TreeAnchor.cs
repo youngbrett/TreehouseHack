@@ -8,6 +8,9 @@ public class TreeAnchor : MonoBehaviour
     public float diameter;
 
     public Vector3 CP;  // Update when the tree moves.
+    public Vector3 CP1;  // Update when the tree moves.
+    public Vector3 CP2;  // Update when the tree moves.
+
     public GameObject Anchor;
     public GameObject testSphere;
 
