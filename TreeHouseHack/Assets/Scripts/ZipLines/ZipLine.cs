@@ -40,7 +40,7 @@ public class ZipLine : MonoBehaviour
     private void Simulate()
     {
         // SIMULATION
-        Vector2 forceGravity = new Vector2(0f, -1f);
+        Vector2 forceGravity = new Vector2(0f, -5f);
 
         for (int i = 1; i < this.segmentLength; i++)
         {
