@@ -116,8 +116,6 @@ public class BasicController : MonoBehaviour
 
             //It will update target gameobject's current postion.
             target.transform.position = new Vector3(currentPosition.x, target.transform.position.y, currentPosition.z);
-
-            Debug.Log("OG: " + target.transform.position + " New: " + currentPosition);
         }
 
     }
@@ -135,19 +133,18 @@ public class BasicController : MonoBehaviour
     
     void Movement()
     {
-
         translation = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         strafe = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
         //playerCamera.Translate(strafe, 0, translation);
         playerCamera.position += strafe * playerCamera.right + translation * new Vector3(playerCamera.forward.x, 0, playerCamera.forward.z);
 
-        if (Input.GetKeyDown("q"))
+        if (Input.GetKey("q"))
         {
-            playerCamera.position -= new Vector3(0, playerCamera.position.y * speed * Time.deltaTime, 0);
+            playerCamera.position -= new Vector3(0, playerCamera.position.y * speed / 50f * Time.deltaTime, 0);
         }
-        if (Input.GetKeyDown("e"))
+        if (Input.GetKey("e"))
         {
-            playerCamera.position += new Vector3(0, playerCamera.position.y * speed * Time.deltaTime, 0);
+            playerCamera.position += new Vector3(0, playerCamera.position.y * speed / 50f * Time.deltaTime, 0);
         }
     }
 

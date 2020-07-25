@@ -10,7 +10,7 @@ public class ZipLine : MonoBehaviour
     private LineRenderer lineRenderer;
     private List<RopeSegment> ropeSegments = new List<RopeSegment>();
     private float ropeSegLen = 0.25f;
-    private int segmentLength = 35;
+    private int segmentLength = 75;
     private float lineWidth = 0.1f;
 
     // Use this for initialization
