@@ -11,11 +11,15 @@ public class Treehouse : MonoBehaviour
     public static bool NeedRefresh = false;
     public float Elevation = 2f;
     public float RailElevation = 1f;
-
+    public bool RectangularDeck = true;
+    
     public GameObject testSphere;
+    private GameObject AnchorType;
 
     private void Start()
     {
+        AnchorType = Resources.Load("Prefabs/Bracket") as GameObject; // ameObject.CreatePrimitive(PrimitiveType.Cube);
+
         float treeHeight = 0.0f;
 
         foreach (var t in Trees)
@@ -29,9 +33,12 @@ public class Treehouse : MonoBehaviour
         foreach (var t in Trees)
         {
             TreeAnchor ta = t.gameObject.AddComponent<TreeAnchor>();
-            GameObject anchor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject anchor = Instantiate(AnchorType);
             ta.Anchor = anchor;
+
+            //anchor.transform.position = t.transform.position + new Vector3(0f, Elevation, 0f);
             anchor.transform.position = new Vector3(t.transform.position.x, treeHeight, t.transform.position.z);
+
 
             ta.CPTreeOffset = 0.5f;
             ta.elevation = Elevation;
@@ -44,12 +51,11 @@ public class Treehouse : MonoBehaviour
         UpdateAnchors();
     }
 
-    //void Update()
-    //{
-    //    foreach (var t in Trees)
-    //    {
+    //void Update()   {
+    //    foreach (var t in Trees)    {
     //        GameObject anchor = t.GetComponent<TreeAnchor>().Anchor;
     //        if (anchor != null && !NeedRefresh) { if (anchor.transform.hasChanged) { NeedRefresh = true; } }            //  If we don't need to refresh, check if the anchor has changed.
+
     //    }
     //}
 
@@ -114,28 +120,40 @@ public class Treehouse : MonoBehaviour
         NeedRefresh = false;            //  Reset our flag.
         OrderTrees();                   //  Figure out my trees.
 
-        foreach (var t in Trees)        //  We're assuming all tree anchors need to change.  (Good assumption.)
+        if (OrderedTrees.Count == 3)
         {
-            GameObject anchor = t.GetComponent<TreeAnchor>().Anchor;
-
-            if (anchor != null)             
+            for (int t = 0; t < 3; t++)
             {
-                t.transform.position = anchor.transform.position - new Vector3(0, t.GetComponent<TreeAnchor>().elevation, 0);       //  If we've moved the anchor, move the tree.  Account for elevation.
+                GameObject anchor = OrderedTrees[t].GetComponent<TreeAnchor>().Anchor;
+                TreeAnchor ta = OrderedTrees[t].GetComponent<TreeAnchor>();
 
-                List<GameObject> otherTrees = new List<GameObject>();                       //  Get a list of other trees.  
-                foreach (var o in Trees) { if (o != t) { otherTrees.Add(o); } }
+                OrderedTrees[t].transform.position = anchor.transform.position - new Vector3(0, OrderedTrees[t].GetComponent<TreeAnchor>().elevation, 0);       
 
-                if (otherTrees.Count == 1)                  //  If there are other trees.
+                if (t == 0)
                 {
-                    anchor.transform.LookAt(otherTrees[0].GetComponent<TreeAnchor>().Anchor.transform);         //  If there's only one tree, look at the other tree.  SIMPLE!
+                    anchor.transform.LookAt((OrderedTrees[1].GetComponent<TreeAnchor>().Anchor.transform.position + OrderedTrees[2].GetComponent<TreeAnchor>().Anchor.transform.position) / 2);  
+
                 }
-                else if (otherTrees.Count == 2)
+                else if (t == 1)
                 {
-                    anchor.transform.LookAt((otherTrees[0].GetComponent<TreeAnchor>().Anchor.transform.position + otherTrees[1].GetComponent<TreeAnchor>().Anchor.transform.position) / 2);  // If two trees, split.
+                    anchor.transform.LookAt(OrderedTrees[2].GetComponent<TreeAnchor>().Anchor.transform.position); 
+
                 }
-                t.GetComponent<TreeAnchor>().CP = anchor.transform.position + anchor.transform.forward * t.GetComponent<TreeAnchor>().CPTreeOffset;         // Change the Connection Point of the Tree Anchor.
+                else if (t == 2)
+                {
+                    anchor.transform.LookAt(OrderedTrees[1].GetComponent<TreeAnchor>().Anchor.transform.position); 
+                }
+                //OrderedTrees[t].GetComponent<TreeAnchor>().CP = anchor.transform.position + anchor.transform.forward * OrderedTrees[t].GetComponent<TreeAnchor>().CPTreeOffset;
+                OrderedTrees[t].GetComponent<TreeAnchor>().CP = anchor.transform.position;
             }
+            gameObject.GetComponent<Deck>().DrawDeck();
         }
-       gameObject.GetComponent<Deck>().DrawDeck();
     }
+
+
+
+  
+   
+
+
 }

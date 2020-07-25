@@ -62,6 +62,7 @@ namespace TreeHouseHack
             {
                 GameObject NewPicket = Instantiate(PicketType);
                 Pickets.Add(NewPicket.GetComponent<RailPicket>());
+                NewPicket.transform.parent = this.transform.parent;
             }
         }
 
@@ -78,9 +79,11 @@ namespace TreeHouseHack
             {
             float space = RailLength / (ActivePickets - 1);
 
-            Pickets[i].transform.rotation = this.transform.rotation * Quaternion.Euler(-Vector3.left * 90 + Vector3.forward * 90);
+                Pickets[i].transform.rotation = this.transform.rotation * Quaternion.Euler(-Vector3.left * 90 );
 
-            if (i == 0) { Pickets[i].transform.position = this.transform.position; }
+            if (i == 0) { Pickets[i].transform.position = this.transform.position + PicketWidth / 2 * this.transform.forward; }
+            else if( i == ActivePickets - 1)
+            { Pickets[i].transform.position = this.transform.position - PicketWidth / 2 * this.transform.forward + i * space * this.transform.forward; }
             else { Pickets[i].transform.position = this.transform.position + i * space * this.transform.forward; }
 
             Pickets[i].transform.localScale = new Vector3(1, 1, this.transform.GetComponentInParent<Treehouse>().RailElevation * 1.1f / 2.4384f);

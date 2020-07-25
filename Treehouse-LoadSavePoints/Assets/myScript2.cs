@@ -8,37 +8,53 @@ using UnityEngine.UI;
 
 public class myScript2 : MonoBehaviour
 {
+    public GameObject allScanHolder;
     public Button submitLoginButton;
     public Button signUp;
     public InputField Username_field;
     public GameObject loginPanel;
     public GameObject homePanel;
-    int mScale = 40;
-    int nScale = 0;
-    bool entered = false;
+    public static int mScale = 40;
+    public static int nScale = 0;
+    public static bool entered = false;
     public Text loginSuccess;
     public Text errorMsgTxt;
     public Text welcome;
 
     public GameObject lightGreenPanel;
+    public GameObject lightGreenDesignMode;
 
     public string userName = "";
 
 
-    bool canGoForwards = false;
+    public static bool canGoForwards = false;
     string displayString = "loading...";
 
 
     public Button scanTrees;
+    public Button designMode;
     public GameObject ARSession;
     public GameObject startScanning;
+    public Button enterDesignMode;
+    public Button directDesignMode;
+    public GameObject designModeAssets;
+    bool allFieldsFilled = false;
+    public Sprite newSprite;
+
+    public GameObject treeHouse;
+
+    public Text[] fields;
 
     public static DatabaseReference reference;
     int counter = 0;
     int voter = 0;
+    
+
 
     void Start()
     {
+        
+
         // Set up the Editor before calling into the realtime database.
         FirebaseApp.DefaultInstance.SetEditorDatabaseUrl("https://u2020-test.firebaseio.com/");
 
@@ -56,8 +72,14 @@ public class myScript2 : MonoBehaviour
         Button btn2 = scanTrees.GetComponent<Button>();
         btn2.onClick.AddListener(startTreeScan);
 
-        //Button btn3 = startScanning.GetComponent<Button>();
-        //btn3.onClick.AddListener(startScan);
+        Button btn3 = designMode.GetComponent<Button>();
+        btn3.onClick.AddListener(enterTreeData);
+
+        Button btn4 = enterDesignMode.GetComponent<Button>();
+        btn4.onClick.AddListener(enterDesMod);
+
+        Button btn5 = directDesignMode.GetComponent<Button>();
+        btn5.onClick.AddListener(directDesMode);
     }
     private void Update()
     {
@@ -90,6 +112,60 @@ public class myScript2 : MonoBehaviour
         }
         //Debug.Log(nScale);
 
+        int textfields = 0;
+
+        for (int j = 0; j < 6; j++) {
+            if (fields[j].text != "") {
+                textfields++;
+            }
+        }
+
+        if (textfields == 6) {
+            allFieldsFilled = true;
+            enterDesignMode.image.sprite = newSprite;
+        }
+
+    }
+
+    void directDesMode()
+    {
+        allScanHolder.SetActive(false);
+        homePanel.SetActive(false);
+        entered = true;
+        canGoForwards = false;
+        nScale = 0;
+        mScale = 40;
+
+        lightGreenPanel.SetActive(false);
+        lightGreenDesignMode.SetActive(false);
+        designModeAssets.SetActive(true);
+        ARSession.SetActive(false);
+        treeHouse.GetComponent<Treehouse>().enabled = true;
+
+    }
+
+    void enterDesMod() {
+        allScanHolder.SetActive(false);
+        Debug.Log("thiswasClicked");
+        if (allFieldsFilled) {
+            lightGreenPanel.SetActive(false);
+            lightGreenDesignMode.SetActive(false);
+            designModeAssets.SetActive(true);
+            ARSession.SetActive(false);
+            treeHouse.GetComponent<Treehouse>().enabled = true;
+        }
+    }
+
+    void enterTreeData() {
+        //allScanHolder.SetActive(false);
+        entered = true;
+        canGoForwards = false;
+        nScale = 0;
+        mScale = 40;
+        lightGreenDesignMode.SetActive(true);
+        homePanel.SetActive(false);
+        //TouchScreenKeyboard.Open("", TouchScreenKeyboardType.Default);
+
     }
 
     //void startScan() {
@@ -100,6 +176,8 @@ public class myScript2 : MonoBehaviour
     //}
 
     void startTreeScan() {
+        designModeAssets.SetActive(false);
+        allScanHolder.SetActive(true);
         entered = true;
         canGoForwards = false;
         nScale = 0;
@@ -108,7 +186,9 @@ public class myScript2 : MonoBehaviour
         ARSession.SetActive(true);
         homePanel.SetActive(false);
         lightGreenPanel.SetActive(false);
+        lightGreenDesignMode.SetActive(false);
         //startScanning.SetActive(true);
+        
 
     }
 
